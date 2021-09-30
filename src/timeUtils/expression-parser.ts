@@ -125,8 +125,7 @@ export function getTimeType(str: string): TimeType | null {
     return isValidTimestampStr(str) ? TimeType.TIMESTAMP : null;
   }
 
-  // TODO - consider removing 'sec' condition - might not be needed.
-  if (str.includes('hr') || str.includes('min') || str.includes('sec')) {
+  if (str.includes('hr') || str.includes('min')) {
     return isValidDurationStr(str) ? TimeType.DURATION : null;
   }
 
