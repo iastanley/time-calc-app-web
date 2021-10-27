@@ -132,17 +132,47 @@ export function getTimeType(str: string): TimeType | null {
   return null;
 }
 
+
+/*
+* strVal examples: "5:00", "5:00pm"
+* "am/pm" will only be included if is24hrTime === false
+* returns UTC timestamp in ms for the time TODAY.
+*/
 export function getTimestamp(strVal: string, is24hrTime: boolean): number {
-  // TODO - add implementation
-  return 0;
+  let isPM = false;
+  let timeOnlyStr;
+  if (!is24hrTime) {
+    if (strVal.indexOf('pm') > -1) {
+      isPM = true;
+    }
+    timeOnlyStr = strVal.slice(0, -2); // remove trailing 'am' or 'pm' if is24hrTime === false
+  } else {
+    timeOnlyStr = strVal;
+  }
+
+  const timeStrArray = timeOnlyStr.split(':');
+  let hours = parseInt(timeStrArray[0]) + (isPM ? 12 : 0);
+  // Correction needed for 12:xx am -ie 00:xx in 24hr time
+  if (hours === 12 && !isPM && !is24hrTime) {
+    hours = 0;
+  }
+  const minutes = parseInt(timeStrArray[1]);
+  
+  const today = new Date(Date.now());
+  today.setHours(hours, minutes);
+  return today.getTime();
 }
 
-
+/*
+* strVal examples: "5hr", "30min", "5hr30min"
+* returns duration in ms
+*/
 export function getDuration(strVal: string): number {
   let hoursStr = '';
   let minutesStr = '';
   let valueStr = '';
 
+  // "hr" "min" -- skip "r" "i" and "n" chars - just use "h" and "m"
   const skipChars = ['r', 'i', 'n'];
 
   for (let char of strVal) {
