@@ -1,4 +1,5 @@
 import * as parser from './expression-parser';
+let originalDatenNow: () => number;
 
 describe('expression-parser', () => {
   describe('getDuration', () => {
@@ -28,4 +29,50 @@ describe('expression-parser', () => {
     });
   });
 
+  describe('getTimestamp', () => {
+    beforeEach(() => {
+      originalDatenNow = Date.now;
+      Date.now = jest.fn(() => 1635299485596);
+    });
+
+    afterEach(() => {
+      Date.now = originalDatenNow;
+    });
+
+    it('correctly calculates timestamp for "5:15am', () => {
+      const actual = parser.getTimestamp("5:15am", false);
+      const expected = 1635239725596;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates timestamp for "5:15pm"', () => {
+      const actual = parser.getTimestamp("5:15pm", false);
+      const expected = 1635282925596;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 5:15 - 24hr time', () => {
+      const actual = parser.getTimestamp("5:15", true);
+      const expected = 1635239725596;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calcualtes the timestamp for 17:15 - 24hr time', () => {
+      const actual = parser.getTimestamp("17:15", true);
+      const expected = 1635282925596;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timstamp for 12:00am', () => {
+      const actual = parser.getTimestamp("12:00am", false);
+      const expected = 1635220825596;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 00:00 - 24hr time', () => {
+      const actual = parser.getTimestamp("00:00", true);
+      const expected = 1635220825596;
+      expect(actual).toBe(expected);
+    });
+  });
 });
