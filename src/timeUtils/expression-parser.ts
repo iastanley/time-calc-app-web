@@ -87,7 +87,7 @@ export function parseExpression(input: string, is24hrTime: boolean): ParsedExpre
 }
 
 function getParsedTime(timeStr: string, is24hrTime: boolean): Time | null {
-  const type = getTimeType(timeStr);
+  const type = getTimeType(timeStr, is24hrTime);
   if (type === TimeType.DURATION) {
     return {
       value: getDuration(timeStr),
@@ -120,9 +120,9 @@ export function getParsedOperator(operatorStr: string): TimeOperator | null {
 
 // TODO - additional validation to ensure that this is a valid timetype
 // ie 04:00:00 - invalid, 5hr5 - invalid, 14:00pm - invalid
-export function getTimeType(str: string): TimeType | null {
+export function getTimeType(str: string, is24hrTime: boolean): TimeType | null {
   if (str.includes(':')) {
-    return isValidTimestampStr(str) ? TimeType.TIMESTAMP : null;
+    return isValidTimestampStr(str, is24hrTime) ? TimeType.TIMESTAMP : null;
   }
 
   if (str.includes('hr') || str.includes('min')) {
@@ -203,8 +203,12 @@ export function getDuration(strVal: string): number {
   return hours + minutes;
 }
 
-export function isValidTimestampStr(timeStr: string): boolean {
-  // TODO - add implementation
+export function isValidTimestampStr(timeStr: string, is24hrTime: boolean): boolean {
+  if ((timeStr.indexOf('pm') > -1 || timeStr.indexOf('am') > -1) && is24hrTime) {
+    return false;
+  }
+
+  // TODO - finish adding other validation
   return true;
 }
 

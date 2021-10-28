@@ -76,3 +76,11 @@ describe('expression-parser', () => {
     });
   });
 });
+
+describe('isValidTimestampStr', () => {
+  
+});
+
+describe('isValidDurationStr', () => {
+
+});
