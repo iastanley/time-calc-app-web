@@ -1,5 +1,5 @@
 
-import { digitOnlyRegex } from "./regex-util";
+import { digitOnlyRegex } from './regex-util';
 
 // time in ms
 export const SECOND = 1000;
@@ -20,7 +20,7 @@ export enum TimeOperator {
   TO = 'to'
 }
 
-export enum ExpressionType {
+export enum OperationType {
   POINT_AND_DURATION = 'POINT_AND_DURATION',
   DURATION_AND_DURATION = 'DURATION_AND_DURATION',
   POINT_TO_POINT = 'POINT_TO_POINT',
@@ -31,12 +31,18 @@ export interface Time {
   type: TimeType,
 }
 
-export interface ParsedExpression {
-  expression: [Time, TimeOperator, Time], 
-  type: ExpressionType,
+export type ParsedExpression = [Time, TimeOperator, Time];
+
+export interface ParsedOperation {
+  expression: ParsedExpression, 
+  type: OperationType,
 }
 
-export function parseExpression(input: string, is24hrTime: boolean): ParsedExpression | null {
+// TODO - POTENTIAL REFACTOR
+// Make this a class so that is24hrTime doesn't need to be passed as an arg all over the place
+// you probably only want a single instance for the application
+
+export function parseExpression(input: string, is24hrTime: boolean): ParsedOperation | null {
   console.log('@parseExpression', `input: ${input}, is24hrTime: ${is24hrTime}`);
   // split string into 3 parts based on operator
   const parsedExpressionArray: [Time?, TimeOperator?, Time?] = [];
@@ -62,15 +68,15 @@ export function parseExpression(input: string, is24hrTime: boolean): ParsedExpre
   // Determine expression type
   let expressionType;
   if (parsedExpressionArray[0]?.type === TimeType.DURATION && parsedExpressionArray[2]?.type === TimeType.DURATION && parsedExpressionArray[1] !== TimeOperator.TO) {
-    expressionType = ExpressionType.DURATION_AND_DURATION;
+    expressionType = OperationType.DURATION_AND_DURATION;
   } else if (
     parsedExpressionArray[0]?.type === TimeType.TIMESTAMP && parsedExpressionArray[2]?.type === TimeType.TIMESTAMP && parsedExpressionArray[1] === TimeOperator.TO
   ) {
-    expressionType = ExpressionType.POINT_TO_POINT;
+    expressionType = OperationType.POINT_TO_POINT;
   } else if (
     parsedExpressionArray[0]?.type === TimeType.TIMESTAMP && parsedExpressionArray[2]?.type === TimeType.DURATION && parsedExpressionArray[1] !== TimeOperator.TO 
   ) {
-    expressionType = ExpressionType.POINT_AND_DURATION;
+    expressionType = OperationType.POINT_AND_DURATION;
   } else {
     return null; // invalid expresion detected.
   }
@@ -138,6 +144,7 @@ export function getTimeType(str: string, is24hrTime: boolean): TimeType | null {
 * "am/pm" will only be included if is24hrTime === false
 * returns UTC timestamp in ms for the time TODAY.
 */
+// TODO - add support for 'now'
 export function getTimestamp(strVal: string, is24hrTime: boolean): number {
   let isPM = false;
   let timeOnlyStr;
