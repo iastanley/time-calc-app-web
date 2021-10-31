@@ -1,14 +1,29 @@
-import { ParsedOperation, ParsedExpression, OperationType, TimeOperator } from './expression-parser';
+import { ParsedOperation, ParsedExpression, OperationType, TimeOperator, TimeType, Time } from './expression-parser';
 
 export class TimeMath {
-  evaluate(operation: ParsedOperation): number | null {
+  evaluate(operation: ParsedOperation): Time | null {
     switch (operation.type) {
-      case OperationType.DURATION_AND_DURATION:
-        return this.evaluateDurationAndDuration(operation.expression);
-      case OperationType.POINT_AND_DURATION:
-        return this.evaluatePointAndDuration(operation.expression);
-      case OperationType.POINT_TO_POINT:
-        return this.evaluatePointToPoint(operation.expression);
+      case OperationType.DURATION_AND_DURATION: {
+        const value = this.evaluateDurationAndDuration(operation.expression);
+        return value == null ? value : {
+          value,
+          type: TimeType.DURATION
+        };
+      }
+      case OperationType.POINT_AND_DURATION: {
+        const value = this.evaluatePointAndDuration(operation.expression);
+        return value == null ? value : {
+          value,
+          type: TimeType.TIMESTAMP
+        };
+      }
+      case OperationType.POINT_TO_POINT: {
+        const value = this.evaluatePointToPoint(operation.expression);
+        return value == null ? value : {
+          value,
+          type: TimeType.DURATION
+        };
+      }
       default:
         return null;
     }
