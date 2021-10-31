@@ -1,4 +1,4 @@
-import { ParsedOperation, ParsedExpression, OperationType, TimeOperator, TimeType, Time } from './expression-parser';
+import { ParsedOperation, ParsedExpression, OperationType, TimeOperator, TimeType, Time } from './time-parser';
 
 export class TimeMath {
   evaluate(operation: ParsedOperation): Time | null {
