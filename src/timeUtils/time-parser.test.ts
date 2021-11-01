@@ -161,5 +161,13 @@ describe('TimeParser', () => {
   describe('isValidDurationStr', () => {
   
   });
+
+  describe('formatDurationOutput', () => {
+
+  });
+
+  describe('formatTimestampOutput', () => {
+
+  });
 });
 
