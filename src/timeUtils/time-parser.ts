@@ -99,6 +99,16 @@ export class TimeParser {
     }
   }
 
+  // Takes the ms output from TimeMath.evaluate and converts to string value that can be shown to user
+  public formatOutput(time: Time): string {
+    const { value: timeVal, type } = time;
+    if (type === TimeType.DURATION) {
+      return this.formatDurationOutput(timeVal);
+    }
+
+    return this.formatTimestampOutput(timeVal);
+  }
+
   /*
   * strVal examples: "5hr", "30min", "5hr30min"
   * returns duration in ms
@@ -196,6 +206,46 @@ export class TimeParser {
   public isValidDurationStr(timeStr: string): boolean {
     // TODO - add implementation
     return true;
+  }
+
+  public formatDurationOutput(duration: number): string {
+    const hours = Math.floor(duration / HOUR);
+
+    const remainder = duration % HOUR;
+    const minutes = Math.floor(remainder / MINUTE);
+
+    const hoursSubstr = hours > 0 ? `${hours}hr` : '';
+    const minutesSubtr = minutes > 0 ? `${minutes}min` : '';
+
+    if (!(hoursSubstr + minutesSubtr).length) {
+      return '0';
+    }
+
+    return hoursSubstr + minutesSubtr;
+  }
+
+  public formatTimestampOutput(timestamp: number): string {
+    const date = new Date(timestamp);
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const minutesStr = minutes < 10 ? '0'.concat(minutes.toString()) : minutes.toString();
+
+    if (this.is24hrTime) {
+      return `${hours}:${minutesStr}`;
+    }
+
+    let suffix = 'am';
+    if (hours > 12) {
+      suffix = 'pm';
+      hours = hours - 12;
+    } else if (hours === 0) {
+      hours = 12;
+    } else if (hours === 12) {
+      suffix = 'pm';
+    }
+    
+    return `${hours}:${minutesStr}${suffix}`;
   }
 
   private getParsedTime(timeStr: string): Time | null {
