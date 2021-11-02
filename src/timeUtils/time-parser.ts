@@ -209,6 +209,11 @@ export class TimeParser {
   }
 
   public formatDurationOutput(duration: number): string {
+    let negativeSign = '';
+    if (duration < 0) {
+      negativeSign = '-';
+      duration = Math.abs(duration);
+    }
     const hours = Math.floor(duration / HOUR);
 
     const remainder = duration % HOUR;
@@ -221,7 +226,7 @@ export class TimeParser {
       return '0';
     }
 
-    return hoursSubstr + minutesSubtr;
+    return negativeSign + hoursSubstr + minutesSubtr;
   }
 
   public formatTimestampOutput(timestamp: number): string {
@@ -232,7 +237,8 @@ export class TimeParser {
     const minutesStr = minutes < 10 ? '0'.concat(minutes.toString()) : minutes.toString();
 
     if (this.is24hrTime) {
-      return `${hours}:${minutesStr}`;
+      const hoursStr = hours < 10 ? '0'.concat(hours.toString()) : hours.toString();
+      return `${hoursStr}:${minutesStr}`;
     }
 
     let suffix = 'am';

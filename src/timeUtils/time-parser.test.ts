@@ -1,4 +1,4 @@
-import { TimeParser, HOUR, MINUTE, TimeOperator, TimeType, OperationType } from './time-parser';
+import { TimeParser, HOUR, MINUTE, TimeOperator, TimeType, OperationType, SECOND } from './time-parser';
 
 describe('TimeParser', () => {
   let parser: TimeParser;
@@ -162,12 +162,73 @@ describe('TimeParser', () => {
   
   });
 
-  describe('formatDurationOutput', () => {
+  describe('formatOutput', () => {
+    // tests for formatting duration
+    it('formats an hour duration', () => {
+      const duration = {
+        value: 5 * HOUR,
+        type: TimeType.DURATION
+      };
+      const actual = parser.formatOutput(duration);
+      expect(actual).toEqual('5hr');
+    });
 
-  });
+    it('formats an hour + min duration', () => {
+      const duration = {
+        value: 5 * HOUR + 12 * MINUTE,
+        type: TimeType.DURATION
+      }
+      const actual = parser.formatOutput(duration);
+      expect(actual).toEqual('5hr12min');
+    });
 
-  describe('formatTimestampOutput', () => {
+    it('formats an hour + min + second duration', () => {
+      const duration = {
+        value: 5 * HOUR + 12 * MINUTE + 15 * SECOND,
+        type: TimeType.DURATION
+      }
+      const actual = parser.formatOutput(duration);
+      expect(actual).toEqual('5hr12min');
+    });
 
+    it('formats a negative duration', () => {
+      const duration = {
+        value: -1 * 12 * MINUTE,
+        type: TimeType.DURATION
+      }
+      const actual = parser.formatOutput(duration);
+      expect(actual).toEqual('-12min');
+    });
+
+    it('formats zero duration', () => {
+      const duration = {
+        value: 0,
+        type: TimeType.DURATION
+      }
+      const actual = parser.formatOutput(duration);
+      expect(actual).toEqual('0');
+    });
+
+    // tests for formatting timestamp
+    it('formats "5:30pm"', () => {});
+
+    it('formats "5:30am"', () => {});
+
+    it('formats "17:30" 24hr time', () => {});
+
+    it('formats "5:30" 24hr time', () => {});
+
+    it('formats "00:30" 24hr time', () => {
+
+    });
+
+    it('formats "12:30am"', () => {
+
+    });
+
+    it('formats "12:30pm"', () => {
+
+    });
   });
 });
 
