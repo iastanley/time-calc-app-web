@@ -1,13 +1,15 @@
 import { TimeMath } from './time-math';
 import { TimeParser, MINUTE, HOUR, TimeType } from './time-parser';
-let originalDatenNow: () => number;
+import { getMockDateNowTimestamp } from './time-test-util';
 
 describe('TimeMath.evaluate', () => {
   let timeMath: TimeMath;
   let timeParser: TimeParser;
+  let originalDatenNow: () => number;
+
   beforeEach(() => {
     originalDatenNow = Date.now;
-    Date.now = jest.fn(() => 1635299485596);
+    Date.now = jest.fn(() => getMockDateNowTimestamp());
     timeMath = new TimeMath();
     timeParser = new TimeParser();
   });
@@ -19,7 +21,7 @@ describe('TimeMath.evaluate', () => {
   it('can evaluate a timepoint plus duration operation', () => {
     const parsedOperation = timeParser.parseExpression('5:00pm + 5hr30min');
     const actual = parsedOperation && timeMath.evaluate(parsedOperation);
-    const expected = 1635301825596;
+    const expected = 315613800000; // 10:30pm
     expect(actual?.value).toBe(expected);
     expect(actual?.type).toBe(TimeType.TIMESTAMP);
   });
@@ -27,7 +29,7 @@ describe('TimeMath.evaluate', () => {
   it('can evaluate a timepoint minus duration operation', () => {
     const parsedOperation = timeParser.parseExpression('5:00pm - 5hr30min');
     const actual = parsedOperation && timeMath.evaluate(parsedOperation);
-    const expected = 1635262225596;
+    const expected = 315574200000; // 11:30am
     expect(actual?.value).toBe(expected);
     expect(actual?.type).toBe(TimeType.TIMESTAMP);
   });

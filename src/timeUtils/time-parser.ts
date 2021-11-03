@@ -168,10 +168,14 @@ export class TimeParser {
     }
 
     const timeStrArray = timeOnlyStr.split(':');
-    let hours = parseInt(timeStrArray[0]) + (isPM ? 12 : 0);
+    let hours = parseInt(timeStrArray[0]);
     // Correction needed for 12:xx am -ie 00:xx in 24hr time
     if (hours === 12 && !isPM && !this.is24hrTime) {
       hours = 0;
+    }
+    // 12:xxpm is the same as 12:xx in 24hr time
+    if (hours !== 12 && isPM) {
+      hours += 12;
     }
     const minutes = parseInt(timeStrArray[1]);
     

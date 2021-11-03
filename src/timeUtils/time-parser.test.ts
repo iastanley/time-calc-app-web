@@ -1,4 +1,5 @@
 import { TimeParser, HOUR, MINUTE, TimeOperator, TimeType, OperationType, SECOND } from './time-parser';
+import { getMockDateNowTimestamp } from './time-test-util';
 
 describe('TimeParser', () => {
   let parser: TimeParser;
@@ -6,7 +7,7 @@ describe('TimeParser', () => {
 
   beforeEach(() => {
     originalDatenNow = Date.now;
-    Date.now = jest.fn(() => 1635299485596);
+    Date.now = jest.fn(() => getMockDateNowTimestamp());
     parser = new TimeParser();
   });
 
@@ -51,7 +52,7 @@ describe('TimeParser', () => {
         const [time1, operator, time2] = parsedOperation.expression;
         expect(operator).toBe(TimeOperator.PLUS);
         expect(time1.type).toBe(TimeType.TIMESTAMP);
-        expect(time1.value).toBe(1635239725596);
+        expect(time1.value).toBe(315551700000);
         expect(time2.type).toBe(TimeType.DURATION);
         expect(time2.value).toBe(5 * HOUR);
       }
@@ -65,7 +66,7 @@ describe('TimeParser', () => {
         const [time1, operator, time2] = parsedOperation.expression;
         expect(operator).toBe(TimeOperator.MINUS);
         expect(time1.type).toBe(TimeType.TIMESTAMP);
-        expect(time1.value).toBe(1635239725596);
+        expect(time1.value).toBe(315551700000);
         expect(time2.type).toBe(TimeType.DURATION);
         expect(time2.value).toBe(5 * HOUR);
       }
@@ -79,9 +80,9 @@ describe('TimeParser', () => {
         const [time1, operator, time2] = parsedOperation.expression;
         expect(operator).toBe(TimeOperator.TO);
         expect(time1.type).toBe(TimeType.TIMESTAMP);
-        expect(time1.value).toBe(1635239725596);
+        expect(time1.value).toBe(315551700000);
         expect(time2.type).toBe(TimeType.TIMESTAMP);
-        expect(time2.value).toBe(1635282925596);
+        expect(time2.value).toBe(315594900000);
       }
     });
   });
@@ -116,40 +117,53 @@ describe('TimeParser', () => {
   describe('getTimestamp', () => {
     it('correctly calculates timestamp for "5:15am', () => {
       const actual = parser.getTimestamp("5:15am");
-      const expected = 1635239725596;
+      const expected = 315551700000;
       expect(actual).toBe(expected);
     });
 
     it('correctly calculates timestamp for "5:15pm"', () => {
       const actual = parser.getTimestamp("5:15pm");
-      const expected = 1635282925596;
+      const expected = 315594900000;
       expect(actual).toBe(expected);
     });
 
     it('correctly calculates the timestamp for 5:15 - 24hr time', () => {
       parser.set24hrTime(true);
       const actual = parser.getTimestamp("5:15");
-      const expected = 1635239725596;
+      const expected = 315551700000;
       expect(actual).toBe(expected);
     });
 
     it('correctly calcualtes the timestamp for 17:15 - 24hr time', () => {
       parser.set24hrTime(true);
       const actual = parser.getTimestamp("17:15");
-      const expected = 1635282925596;
+      const expected = 315594900000;
       expect(actual).toBe(expected);
     });
 
     it('correctly calculates the timstamp for 12:00am', () => {
       const actual = parser.getTimestamp("12:00am");
-      const expected = 1635220825596;
+      const expected = 315532800000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calcules the timestamp for 12:00pm', () => {
+      const actual = parser.getTimestamp('12:00pm');
+      const expected = 315576000000;
       expect(actual).toBe(expected);
     });
 
     it('correctly calculates the timestamp for 00:00 - 24hr time', () => {
       parser.set24hrTime(true);
       const actual = parser.getTimestamp("00:00");
-      const expected = 1635220825596;
+      const expected = 315532800000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correclty calculates the timestamp for 12:00 - 24hr time', () => {
+      parser.set24hrTime(true);
+      const actual = parser.getTimestamp("12:00");
+      const expected = 315576000000;
       expect(actual).toBe(expected);
     });
   });
@@ -210,24 +224,80 @@ describe('TimeParser', () => {
     });
 
     // tests for formatting timestamp
-    it('formats "5:30pm"', () => {});
+    it('formats "5:30pm"', () => {
+      const timestamp = {
+        value: 315595800000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('5:30pm');
+    });
 
-    it('formats "5:30am"', () => {});
+    it('formats "5:30am"', () => {
+      const timestamp = {
+        value: 315552600000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('5:30am');
+    });
 
-    it('formats "17:30" 24hr time', () => {});
+    it('formats "17:30" 24hr time', () => {
+      parser.set24hrTime(true);
+      const timestamp = {
+        value: 315595800000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('17:30');
+    });
 
-    it('formats "5:30" 24hr time', () => {});
+    it('formats "5:30" 24hr time', () => {
+      parser.set24hrTime(true);
+      const timestamp = {
+        value: 315552600000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('05:30');
+    });
 
     it('formats "00:30" 24hr time', () => {
-
+      parser.set24hrTime(true);
+      const timestamp = {
+        value: 315534600000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('00:30');
     });
 
     it('formats "12:30am"', () => {
-
+      const timestamp = {
+        value: 315534600000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('12:30am');
     });
 
     it('formats "12:30pm"', () => {
+      const timestamp = {
+        value: 315577800000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('12:30pm');
+    });
 
+    it('formats "12:30" 24hr time', () => {
+      parser.set24hrTime(true);
+      const timestamp = {
+        value: 315577800000,
+        type: TimeType.TIMESTAMP
+      }
+      const actual = parser.formatOutput(timestamp);
+      expect(actual).toEqual('12:30');
     });
   });
 });
