@@ -21,7 +21,7 @@ const CalculatorWrapper = styled.div`
   height: 800px;
   margin: 150px auto;
   border: 2px solid #aaaaaa;
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 15px;
 `;
 CalculatorWrapper.displayName = 'Calculator';
