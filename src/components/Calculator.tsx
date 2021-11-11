@@ -20,8 +20,15 @@ const CalculatorWrapper = styled.div`
   width: 400px;
   height: 800px;
   margin: 150px auto;
-  border: 2px solid #aaaaaa;
+  border: 2px solid #ddd;
   border-radius: 20px;
   padding: 15px;
+
+  @media (max-width: 800px) {
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    border: none;
+  }
 `;
 CalculatorWrapper.displayName = 'Calculator';

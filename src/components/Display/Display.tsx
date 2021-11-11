@@ -6,7 +6,7 @@ export const Display: React.FC = () => {
 }
 
 const DisplayWrapper = styled.div`
-  background: #e1e1e1;
+  background: #eee;
   border-radius: 20px;
   width: 100%;
   height: 40%;
