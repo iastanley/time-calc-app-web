@@ -64,7 +64,7 @@ const ButtonsArray: ButtonConfig[] = [
     color: ButtonColor.OPERATOR,
   },
   {
-    displayString: '.',
+    displayString: ':',
     color: ButtonColor.NUMBER,
   },
   {
@@ -91,7 +91,7 @@ export const ButtonGrid: React.FC = () => {
 }
 
 const ButtonGridWrapper = styled.div`
-  height: 50%;
+  height: 45%;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
