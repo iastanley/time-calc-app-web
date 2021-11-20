@@ -43,10 +43,10 @@ const ControlButton = styled.button`
 `
 
 const DurationControlButton = styled(ControlButton)`
-  background-color: rgba(242, 201, 76, 0.5);
+  background-color: rgba(242, 201, 76);
 `;
 
 const TimeControlButton = styled(ControlButton)<{ isActive: boolean }>`
-  background-color: ${props => props.isActive ? 'rgba(86, 204, 242, 0.5)' : '#F1F1F1'};
+  background-color: ${props => props.isActive ? 'rgba(86, 204, 242)' : '#F1F1F1'};
   color: ${props => props.isActive ? 'inherit' : '#BDBDBD'};
 `

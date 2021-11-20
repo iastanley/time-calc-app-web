@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 enum ButtonColor {
   NUMBER = '#e1e1e1',
-  OPERATOR = 'rgba(242, 153, 74, 0.5)',
-  CONFIRM = 'rgba(111, 207, 151, 0.5)',
-  CANCEL = 'rgba(235, 87, 87, 0.5)',
+  OPERATOR = 'rgba(242, 153, 74)',
+  CONFIRM = 'rgba(111, 207, 151)',
+  CANCEL = 'rgba(235, 87, 87)',
 };
 
 interface Props {

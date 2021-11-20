@@ -60,15 +60,15 @@ const CalculatorWrapper = styled.div`
   width: 400px;
   height: 800px;
   margin: 150px auto;
-  border: 2px solid #ddd;
   border-radius: 20px;
   padding: 15px;
+  background: #000;
 
   @media (max-width: 800px) {
     margin: 0;
     width: 100%;
     height: 100vh;
-    border: none;
+    border-radius: initial;
   }
 `;
 CalculatorWrapper.displayName = 'Calculator';
