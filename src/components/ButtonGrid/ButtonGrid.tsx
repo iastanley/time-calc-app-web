@@ -13,6 +13,7 @@ interface Props {
   removeInput: () => void;
   clearInput: () => void;
   confirm: () => void;
+  outputValue: string;
 }
 
 interface ButtonConfig {
@@ -123,8 +124,12 @@ const ButtonsArray: ButtonConfig[] = [
   {
     displayString: '<',
     color: ButtonColor.CANCEL,
-    callback: ({ removeInput }) => {
-      removeInput();
+    callback: ({ removeInput, clearInput, outputValue }) => {
+      if (outputValue.length) {
+        clearInput();
+      } else {
+        removeInput();
+      }
     }
   },
   {
@@ -138,9 +143,17 @@ const ButtonsArray: ButtonConfig[] = [
 ];
 
 export const ButtonGrid: React.FC<Props> = (props) => {
+  const formatBackButton = (btnDisplayString: string): string => {
+    if (btnDisplayString !== '<') {
+      return btnDisplayString;
+    }
+
+    return props.outputValue.length ? 'C' : '<';
+  } 
+
   return <ButtonGridWrapper>
     {ButtonsArray.map((btnConfig: ButtonConfig) => {
-      return <Button color={btnConfig.color} onClick={() => btnConfig.callback(props)}>{btnConfig.displayString}</Button>
+      return <Button key={btnConfig.displayString} color={btnConfig.color} onClick={() => btnConfig.callback(props)}>{formatBackButton(btnConfig.displayString)}</Button>
     })}
   </ButtonGridWrapper>
 }

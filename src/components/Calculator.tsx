@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Display } from './Display/Display';
 import { ControlButtons } from './ControlButtons/ControlButtons';
 import { ButtonGrid } from './ButtonGrid/ButtonGrid';
+import { TimeParser } from '../timeUtils/time-parser';
 
 const Calculator: React.FC = () => {
   const [ inputValue, setInputValue ] = useState<string[]>([]);
   const [ outputValue, setOutputValue ] = useState('');
   const [ is24hrTime, setIs24hrTime ] = useState(false);
+
+  const timeParserRef = useRef<TimeParser>();
+  useEffect(() => {
+    timeParserRef.current = new TimeParser(is24hrTime);
+  }, [is24hrTime]);
 
   const handleUpdateInput = (token: string) => {
     setInputValue(inputValue.concat(token));
@@ -27,8 +33,10 @@ const Calculator: React.FC = () => {
   }
 
   const handleConfirm = () => {
-    console.log('current input', inputValue);
-    setOutputValue('output');
+    if (timeParserRef.current) {
+      const output = timeParserRef.current.evaluateExpression(inputValue);
+      setOutputValue(output);
+    }
   }
 
   return <CalculatorWrapper>
@@ -39,6 +47,7 @@ const Calculator: React.FC = () => {
       removeInput={handleRemoveInput}
       clearInput={handleClearInput}
       confirm={handleConfirm}
+      outputValue={outputValue}
       />
   </CalculatorWrapper>;
 }

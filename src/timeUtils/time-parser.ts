@@ -1,5 +1,6 @@
 
 import { digitOnlyRegex } from './regex-util';
+import { TimeMath } from './time-math';
 
 // time in ms
 export const SECOND = 1000;
@@ -38,6 +39,21 @@ export interface ParsedOperation {
   type: OperationType,
 }
 
+const OPERATOR_TOKENS = ['to', '+', '-'];
+
+export function tokenToString(tokens: string[]): string {
+  let output = ''
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (OPERATOR_TOKENS.includes(token)) {
+      output += ` ${token} `;
+    } else {
+      output += token;
+    }
+  }
+  return output;
+}
+
 export class TimeParser {
   public is24hrTime: boolean;
 
@@ -49,8 +65,21 @@ export class TimeParser {
     this.is24hrTime = enable;
   }
 
+  // this is the method used by the view to go from raw token input to string output
+  public evaluateExpression(input: string[]): string {
+    const parsedExpression = this.parseExpression(tokenToString(input));
+    let time;
+    let outputStr;
+    if (parsedExpression) {
+      time = TimeMath.evaluate(parsedExpression);
+    }
+    if (time) {
+      outputStr = this.formatOutput(time);
+    }
+    return outputStr ?? 'Invalid Input';
+  }
+
   public parseExpression(input: string): ParsedOperation | null {
-    console.log('@parseExpression', `input: ${input}, is24hrTime: ${this.is24hrTime}`);
     // split string into 3 parts based on operator
     const parsedExpressionArray: [Time?, TimeOperator?, Time?] = [];
     let expressionArray = input.split(' ');
@@ -87,11 +116,6 @@ export class TimeParser {
     } else {
       return null; // invalid expresion detected.
     }
-
-    console.log({
-      expression: parsedExpressionArray,
-      type: expressionType,
-    });
 
     return {
       expression: parsedExpressionArray as [Time, TimeOperator, Time],

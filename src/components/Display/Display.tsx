@@ -1,36 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
+import { tokenToString } from '../../timeUtils/time-parser';
 
 interface Props {
   inputValue: string[];
   outputValue: string;
 }
 
-const OPERATOR_TOKENS = ['to', '+', '-'];
-
-export function tokenToString(tokens: string[]): string {
-  let output = ''
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
-    if (OPERATOR_TOKENS.includes(token)) {
-      output += ` ${token} `;
-    } else {
-      output += token;
-    }
-  }
-  return output;
-}
-
 export const Display: React.FC<Props> = ({ inputValue, outputValue }) => {
   return <DisplayWrapper>
-    <DisplayInput type="text" value={tokenToString(inputValue)}/>
-    <DisplayOutput type="text" value={outputValue}/>  
+    <DisplayInput type="text" value={tokenToString(inputValue)} onChange={() => {}}/>
+    <DisplayOutput>{outputValue}</DisplayOutput>  
   </DisplayWrapper>;
 }
 
 const DisplayWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   background: #eee;
   border-radius: 20px;
   width: 100%;
@@ -47,10 +34,14 @@ const BaseInput = styled.input`
 `;
 
 const DisplayInput = styled(BaseInput)`
-  flex: 4;
   font-size: 36px;
+  margin-top: 10%;
 `;
 
-const DisplayOutput = styled(BaseInput)`
-  flex: 1;
+const DisplayOutput = styled.div`
+  font-size: 30px;
+  padding 4px 12px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5%;
 `;
