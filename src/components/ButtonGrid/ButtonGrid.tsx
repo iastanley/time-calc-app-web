@@ -8,9 +8,16 @@ enum ButtonColor {
   CANCEL = 'rgba(235, 87, 87, 0.5)',
 };
 
+interface Props {
+  updateInput: (token: string) => void;
+  removeInput: () => void;
+  clearInput: () => void;
+  confirm: () => void;
+}
+
 interface ButtonConfig {
   displayString: string;
-  callback?: () => void;
+  callback: (props: Props) => void;
   color?: ButtonColor;
 }
 
@@ -18,74 +25,122 @@ const ButtonsArray: ButtonConfig[] = [
   {
     displayString: '1',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('1');
+    }
   },
   {
     displayString: '2',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('2');
+    }
   },
   {
     displayString: '3',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('3');
+    }
   },
   {
     displayString: 'to',
     color: ButtonColor.OPERATOR,
+    callback: ({ updateInput }) => {
+      updateInput(' to ');
+    }
   },
   {
     displayString: '4',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('4');
+    }
   },
   {
     displayString: '5',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('5');
+    }
   },
   {
     displayString: '6',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('6');
+    }
   },
   {
     displayString: '+',
     color: ButtonColor.OPERATOR,
+    callback: ({ updateInput }) => {
+      updateInput('+');
+    }
   },
   {
     displayString: '7',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('7');
+    }
   },
   {
     displayString: '8',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('8');
+    }
   },
   {
     displayString: '9',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('9');
+    }
   },
   {
     displayString: '-',
     color: ButtonColor.OPERATOR,
+    callback: ({ updateInput }) => {
+      updateInput('-');
+    }
   },
   {
     displayString: ':',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput(':');
+    }
   },
   {
     displayString: '0',
     color: ButtonColor.NUMBER,
+    callback: ({ updateInput }) => {
+      updateInput('0');
+    }
   },
   {
     displayString: '<',
     color: ButtonColor.CANCEL,
+    callback: ({ removeInput }) => {
+      removeInput();
+    }
   },
   {
     displayString: '=',
     color: ButtonColor.CONFIRM,
+    callback: ({ confirm }) => {
+      confirm();
+    }
   },
 
 ];
 
-export const ButtonGrid: React.FC = () => {
+export const ButtonGrid: React.FC<Props> = (props) => {
   return <ButtonGridWrapper>
     {ButtonsArray.map((btnConfig: ButtonConfig) => {
-      return <Button color={btnConfig.color}>{btnConfig.displayString}</Button>
+      return <Button color={btnConfig.color} onClick={() => btnConfig.callback(props)}>{btnConfig.displayString}</Button>
     })}
   </ButtonGridWrapper>
 }

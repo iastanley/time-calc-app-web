@@ -1,14 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export const ControlButtons: React.FC = () => {
+interface Props {
+  updateInput: (char: string) => void;
+  toggle24hrTime: () => void;
+  is24hrTime: boolean;
+}
+
+export const ControlButtons: React.FC<Props> = ({ updateInput, toggle24hrTime, is24hrTime }) => {
   return <ControlButtonWrapper>
-    <TimeControlButton isActive={true}>am</TimeControlButton>
-    <TimeControlButton isActive={true}>pm</TimeControlButton>
-    <TimeControlButton isActive={false}>24hr</TimeControlButton>
-    <DurationControlButton>hr</DurationControlButton>
-    <DurationControlButton>min</DurationControlButton>
-    <DurationControlButton>sec</DurationControlButton>
+    <TimeControlButton 
+      isActive={!is24hrTime} 
+      onClick={() => updateInput('am')}>am</TimeControlButton>
+    <TimeControlButton 
+      isActive={!is24hrTime}
+      onClick={() => updateInput('pm')}>pm</TimeControlButton>
+    <TimeControlButton 
+      isActive={is24hrTime}
+      onClick={() => toggle24hrTime()}>24hr</TimeControlButton>
+    <DurationControlButton onClick={() => updateInput('hr')}>hr</DurationControlButton>
+    <DurationControlButton onClick={() => updateInput('min')}>min</DurationControlButton>
+    <DurationControlButton onClick={() => updateInput('sec')}>sec</DurationControlButton>
   </ControlButtonWrapper>
 }
 
