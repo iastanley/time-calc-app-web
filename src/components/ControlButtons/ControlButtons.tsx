@@ -39,7 +39,7 @@ const ControlButtonWrapper = styled.div`
 const ControlButton = styled.button`
   border: none;
   border-radius: 25px;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
 `
 

@@ -178,10 +178,14 @@ export class TimeParser {
   * "am/pm" will only be included if is24hrTime === false
   * returns UTC timestamp in ms for the time TODAY.
   */
-  // TODO - add support for 'now'
   public getTimestamp(strVal: string): number {
     let isPM = false;
     let timeOnlyStr;
+    const today = new Date(Date.now());
+    if (strVal === 'now') {
+      return today.getTime();
+    }
+
     if (!this.is24hrTime) {
       if (strVal.indexOf('pm') > -1) {
         isPM = true;
@@ -203,7 +207,6 @@ export class TimeParser {
     }
     const minutes = parseInt(timeStrArray[1]);
     
-    const today = new Date(Date.now());
     today.setHours(hours, minutes);
     return today.getTime();
   }
@@ -211,7 +214,7 @@ export class TimeParser {
   // TODO - additional validation to ensure that this is a valid timetype
   // ie 04:00:00 - invalid, 5hr5 - invalid, 14:00pm - invalid
   public getTimeType(str: string): TimeType | null {
-    if (str.includes(':')) {
+    if (str.includes(':') || str === 'now') {
       return this.isValidTimestampStr(str) ? TimeType.TIMESTAMP : null;
     }
 
@@ -223,6 +226,9 @@ export class TimeParser {
   }
 
   public isValidTimestampStr(timeStr: string): boolean {
+    if (timeStr === 'now') {
+      return true;
+    }
     if ((timeStr.indexOf('pm') > -1 || timeStr.indexOf('am') > -1) && this.is24hrTime) {
       return false;
     }
