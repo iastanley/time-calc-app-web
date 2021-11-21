@@ -166,6 +166,12 @@ describe('TimeParser', () => {
       const expected = 315576000000;
       expect(actual).toBe(expected);
     });
+
+    it('correctly calcultes timestamp for "now"', () => {
+      const actual = parser.getTimestamp('now');
+      const expected = getMockDateNowTimestamp();
+      expect(actual).toBe(expected);
+    });
   });
 
   describe('isValidTimestampStr', () => {
