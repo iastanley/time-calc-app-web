@@ -34,14 +34,22 @@ const BaseInput = styled.input`
 `;
 
 const DisplayInput = styled(BaseInput)`
-  font-size: 36px;
+  font-size: 2em;
   margin-top: 10%;
+
+  @media(max-width: 375px) {
+    font-size: 1.75em;
+  }
 `;
 
 const DisplayOutput = styled.div`
-  font-size: 30px;
+  font-size: 1.8em;
   padding 4px 12px;
   display: flex;
   justify-content: flex-end;
   margin-bottom: 5%;
+
+  @media(max-width: 375px) {
+    font-size: 1.5em;
+  }
 `;
