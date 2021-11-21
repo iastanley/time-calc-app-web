@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import * as btnColors from '../button-colors';
 
-enum ButtonColor {
-  NUMBER = '#e1e1e1',
-  OPERATOR = 'rgba(242, 153, 74)',
-  CONFIRM = 'rgba(111, 207, 151)',
-  CANCEL = 'rgba(235, 87, 87)',
+const buttonColor = {
+  NUMBER: btnColors.BTN_GRAY,
+  OPERATOR: btnColors.BTN_ORANGE,
+  CONFIRM: btnColors.BTN_GREEN,
+  CANCEL: btnColors.BTN_RED,
 };
 
 interface Props {
@@ -19,111 +20,111 @@ interface Props {
 interface ButtonConfig {
   displayString: string;
   callback: (props: Props) => void;
-  color?: ButtonColor;
+  color?: string;
 }
 
 const ButtonsArray: ButtonConfig[] = [
   {
     displayString: '1',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('1');
     }
   },
   {
     displayString: '2',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('2');
     }
   },
   {
     displayString: '3',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('3');
     }
   },
   {
     displayString: 'to',
-    color: ButtonColor.OPERATOR,
+    color: buttonColor.OPERATOR,
     callback: ({ updateInput }) => {
       updateInput(' to ');
     }
   },
   {
     displayString: '4',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('4');
     }
   },
   {
     displayString: '5',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('5');
     }
   },
   {
     displayString: '6',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('6');
     }
   },
   {
     displayString: '+',
-    color: ButtonColor.OPERATOR,
+    color: buttonColor.OPERATOR,
     callback: ({ updateInput }) => {
       updateInput('+');
     }
   },
   {
     displayString: '7',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('7');
     }
   },
   {
     displayString: '8',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('8');
     }
   },
   {
     displayString: '9',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('9');
     }
   },
   {
     displayString: '-',
-    color: ButtonColor.OPERATOR,
+    color: buttonColor.OPERATOR,
     callback: ({ updateInput }) => {
       updateInput('-');
     }
   },
   {
     displayString: ':',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput(':');
     }
   },
   {
     displayString: '0',
-    color: ButtonColor.NUMBER,
+    color: buttonColor.NUMBER,
     callback: ({ updateInput }) => {
       updateInput('0');
     }
   },
   {
     displayString: '<',
-    color: ButtonColor.CANCEL,
+    color: buttonColor.CANCEL,
     callback: ({ removeInput, clearInput, outputValue }) => {
       if (outputValue.length) {
         clearInput();
@@ -134,7 +135,7 @@ const ButtonsArray: ButtonConfig[] = [
   },
   {
     displayString: '=',
-    color: ButtonColor.CONFIRM,
+    color: buttonColor.CONFIRM,
     callback: ({ confirm }) => {
       confirm();
     }

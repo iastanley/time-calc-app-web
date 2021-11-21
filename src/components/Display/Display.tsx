@@ -21,7 +21,7 @@ const DisplayWrapper = styled.div`
   background: #eee;
   border-radius: 20px;
   width: 100%;
-  height: 40%;
+  height: 38%;
 `;
 
 const BaseInput = styled.input`

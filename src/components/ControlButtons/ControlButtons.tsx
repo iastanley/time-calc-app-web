@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import * as btnColors from '../button-colors';
 
 interface Props {
   updateInput: (char: string) => void;
@@ -20,15 +21,15 @@ export const ControlButtons: React.FC<Props> = ({ updateInput, toggle24hrTime, i
       onClick={() => toggle24hrTime()}>24hr</TimeControlButton>
     <DurationControlButton onClick={() => updateInput('hr')}>hr</DurationControlButton>
     <DurationControlButton onClick={() => updateInput('min')}>min</DurationControlButton>
-    <DurationControlButton onClick={() => updateInput('sec')}>sec</DurationControlButton>
+    <NowControlButton onClick={() => updateInput('now')}>now</NowControlButton>
   </ControlButtonWrapper>
 }
 
 const ControlButtonWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 3fr 3fr 2fr;
   grid-template-rows: 1fr 1fr;
-  height: 15%;
+  height: 18%;
   width: 100%;
   column-gap: 10px;
   row-gap: 10px;
@@ -43,10 +44,14 @@ const ControlButton = styled.button`
 `
 
 const DurationControlButton = styled(ControlButton)`
-  background-color: rgba(242, 201, 76);
+  background-color: ${btnColors.BTN_YELLOW};
+`;
+
+const NowControlButton = styled(ControlButton)`
+  background-color: ${btnColors.BTN_GREEN};
 `;
 
 const TimeControlButton = styled(ControlButton)<{ isActive: boolean }>`
-  background-color: ${props => props.isActive ? 'rgba(86, 204, 242)' : '#F1F1F1'};
-  color: ${props => props.isActive ? 'inherit' : '#BDBDBD'};
+  background-color: ${props => props.isActive ? btnColors.BTN_BLUE : btnColors.BTN_INACTIVE};
+  color: ${props => props.isActive ? 'inherit' : btnColors.BTN_TEXT_INACTIVE};
 `
