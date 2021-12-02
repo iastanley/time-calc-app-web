@@ -49,7 +49,7 @@ const ButtonsArray: ButtonConfig[] = [
     displayString: 'to',
     color: buttonColor.OPERATOR,
     callback: ({ updateInput }) => {
-      updateInput(' to ');
+      updateInput('to');
     }
   },
   {

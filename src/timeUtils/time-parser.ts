@@ -1,4 +1,3 @@
-
 import { digitOnlyRegex } from './regex-util';
 import { TimeMath } from './time-math';
 
@@ -16,8 +15,8 @@ export enum TimeType {
 }
 
 export enum TimeOperator {
-  PLUS = 'plus',
-  MINUS = 'minus',
+  PLUS = '+',
+  MINUS = '-',
   TO = 'to'
 }
 
@@ -39,7 +38,11 @@ export interface ParsedOperation {
   type: OperationType,
 }
 
-const OPERATOR_TOKENS = ['to', '+', '-'];
+export const OPERATOR_TOKENS = [
+  TimeOperator.TO as string, 
+  TimeOperator.PLUS as string, 
+  TimeOperator.MINUS as string
+];
 
 export function tokenToString(tokens: string[]): string {
   let output = ''
@@ -67,7 +70,7 @@ export class TimeParser {
 
   // this is the method used by the view to go from raw token input to string output
   public evaluateExpression(input: string[]): string {
-    const parsedExpression = this.parseExpression(tokenToString(input));
+    const parsedExpression = this.parseExpression(input);
     let time;
     let outputStr;
     if (parsedExpression) {
@@ -79,11 +82,10 @@ export class TimeParser {
     return outputStr ?? 'Invalid Input';
   }
 
-  public parseExpression(input: string): ParsedOperation | null {
-    // split string into 3 parts based on operator
+  public parseExpression(input: string[]): ParsedOperation | null {
     const parsedExpressionArray: [Time?, TimeOperator?, Time?] = [];
-    let expressionArray = input.split(' ');
-    if (expressionArray.length !== 3) {
+    let expressionArray = this.parseTokens(input);
+    if (expressionArray == null) {
       return null;
     }
 
@@ -92,7 +94,7 @@ export class TimeParser {
       return null;
     }
     const parsedTimeValue1 = this.getParsedTime(strVal1);
-    const parsedOperator = this.getParsedOperator(strVal2);
+    const parsedOperator = this.getParsedOperator(strVal2); // TODO - use value directly (maybe)
     const parsedTimeValue2 = this.getParsedTime(strVal3);
     
     if (!parsedTimeValue1 || !parsedOperator || !parsedTimeValue2) {
@@ -286,6 +288,33 @@ export class TimeParser {
     }
     
     return `${hours}:${minutesStr}${suffix}`;
+  }
+
+  private parseTokens(tokens: string[]): string[] | null {
+    const terms = [];
+    let currentTerm = '';
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (OPERATOR_TOKENS.includes(token)) {
+        terms.push(currentTerm);
+        terms.push(token);
+        currentTerm = '';
+      } else {
+        currentTerm += token;
+      }
+    }
+    if (currentTerm.length) {
+      terms.push(currentTerm);
+    }
+    if (terms.length !== 3) {
+      return null;
+    }
+  
+    if (!OPERATOR_TOKENS.includes(terms[1])) {
+      return null;
+    }
+  
+    return terms;
   }
 
   private getParsedTime(timeStr: string): Time | null {

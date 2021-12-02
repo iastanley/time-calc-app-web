@@ -1,5 +1,5 @@
 import { TimeParser, HOUR, MINUTE, TimeOperator, TimeType, OperationType, SECOND } from './time-parser';
-import { getMockDateNowTimestamp } from './time-test-util';
+import { getMockDateNowTimestamp, convertStrToTokens } from './time-test-util';
 
 describe('TimeParser', () => {
   let parser: TimeParser;
@@ -17,7 +17,7 @@ describe('TimeParser', () => {
 
   describe('parseExpression', () => {
     it('correctly parses duration plus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5hr + 30min');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5hr + 30min'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.DURATION_AND_DURATION);
@@ -31,7 +31,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses duration minus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5hr - 30min');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5hr - 30min'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.DURATION_AND_DURATION);
@@ -45,7 +45,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses timepoint plus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5:15am + 5hr');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5:15am + 5hr'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.POINT_AND_DURATION);
@@ -59,7 +59,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses timepoint minus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5:15am - 5hr');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5:15am - 5hr'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.POINT_AND_DURATION);
@@ -73,7 +73,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses timepoint to timepoint operation', () => {
-      const parsedOperation = parser.parseExpression('5:15am to 5:15pm');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5:15am to 5:15pm'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.POINT_TO_POINT);
