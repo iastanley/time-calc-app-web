@@ -1,5 +1,6 @@
 import { digitOnlyRegex } from './regex-util';
 import { TimeMath } from './time-math';
+import { convertStrToTokens } from './time-test-util';
 
 // time in ms
 export const SECOND = 1000;
@@ -228,19 +229,129 @@ export class TimeParser {
   }
 
   public isValidTimestampStr(timeStr: string): boolean {
-    if (timeStr === 'now') {
+    const tokens = convertStrToTokens(timeStr); // TODO: refactor to use tokens directly
+
+    if (tokens.length === 1 && tokens[0] === 'now') {
       return true;
     }
-    if ((timeStr.indexOf('pm') > -1 || timeStr.indexOf('am') > -1) && this.is24hrTime) {
+
+    if (tokens.includes('hr') || tokens.includes('min')) {
+      return false;
+    }
+
+    let hours = '';
+    let minutes = '';
+    let after = '';
+    let addToSection = 'hours';
+    let colonCount = 0;
+    for (let token of tokens) {
+      if (token === ':') {
+        addToSection = 'minutes';
+        colonCount++;
+        continue;
+      }
+      if (token === 'am' || token === 'pm') {
+        addToSection = 'after';
+      }
+      if (addToSection === 'hours') {
+        hours += token;
+      }
+      if (addToSection === 'minutes') {
+        minutes += token;
+      }
+      if (addToSection === 'after') {
+        after += token;
+      }
+    }
+
+    if (colonCount > 1) {
+      return false;
+    }
+    
+    if (hours.length > 2 || hours.length < 1) {
+      return false;
+    }
+    
+
+    if (minutes.length !== 2) {
+      return false;
+    }
+    
+    if (this.is24hrTime && after.length > 0) {
+      return false;
+    }
+
+    if (!this.is24hrTime && (after !== 'am' && after !== 'pm')) {
+      return false;
+    }
+
+    const hoursToInt = parseInt(hours);
+    const minutesToInt = parseInt(minutes);
+
+    if (isNaN(hoursToInt) || isNaN(minutesToInt)) {
+      return false;
+    }
+
+    if (this.is24hrTime && hoursToInt > 23) {
+      return false;
+    }
+
+    if (!this.is24hrTime && (hoursToInt > 12 || hoursToInt < 1)) {
+      
+      return false;
+    }
+
+    if (minutesToInt > 59) {
       return false;
     }
   
-    // TODO - finish adding other validation
     return true;
   }
   
   public isValidDurationStr(timeStr: string): boolean {
-    // TODO - add implementation
+    const tokens = convertStrToTokens(timeStr); // TODO - use tokens directly
+
+    if (tokens.includes(':')) {
+      return false;
+    }
+
+    const values = [];
+    const units = [];
+
+    let value = '';
+    for (let token of tokens) {
+      if (token === 'hr' || token === 'min') {
+        values.push(value);
+        value = '';
+        units.push (token);
+        continue;
+      }
+
+      value += token;
+    }
+
+    if (value.length > 0) {
+      return false;
+    }
+
+    if (values.length > 2) {
+      return false;
+    }
+
+    for (let val of values) {
+      if (isNaN(parseInt(val))) {
+        return false;
+      }
+      // disallow leading zeros in duration values
+      if (val.length > 1 && val[0] === '0') {
+        return false;
+      }
+    }
+
+    if (units.length === 2 && (units[0] !== 'hr' || units[1] !== 'min')) {
+      return false;
+    }
+
     return true;
   }
 
