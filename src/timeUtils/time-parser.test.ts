@@ -1,5 +1,5 @@
 import { TimeParser, HOUR, MINUTE, TimeOperator, TimeType, OperationType, SECOND } from './time-parser';
-import { getMockDateNowTimestamp } from './time-test-util';
+import { getMockDateNowTimestamp, convertStrToTokens } from './time-test-util';
 
 describe('TimeParser', () => {
   let parser: TimeParser;
@@ -17,7 +17,7 @@ describe('TimeParser', () => {
 
   describe('parseExpression', () => {
     it('correctly parses duration plus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5hr + 30min');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5hr + 30min'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.DURATION_AND_DURATION);
@@ -31,7 +31,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses duration minus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5hr - 30min');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5hr - 30min'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.DURATION_AND_DURATION);
@@ -45,7 +45,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses timepoint plus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5:15am + 5hr');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5:15am + 5hr'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.POINT_AND_DURATION);
@@ -59,7 +59,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses timepoint minus duration operation', () => {
-      const parsedOperation = parser.parseExpression('5:15am - 5hr');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5:15am - 5hr'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.POINT_AND_DURATION);
@@ -73,7 +73,7 @@ describe('TimeParser', () => {
     });
 
     it('correctly parses timepoint to timepoint operation', () => {
-      const parsedOperation = parser.parseExpression('5:15am to 5:15pm');
+      const parsedOperation = parser.parseExpression(convertStrToTokens('5:15am to 5:15pm'));
       expect(parsedOperation).not.toBeNull();
       if (parsedOperation != null) {
         expect(parsedOperation.type).toBe(OperationType.POINT_TO_POINT);
@@ -175,11 +175,74 @@ describe('TimeParser', () => {
   });
 
   describe('isValidTimestampStr', () => {
-  
+    it('returns true for valid timestamps', () => {
+      expect(parser.isValidTimestampStr('1:00pm')).toBe(true);
+      expect(parser.isValidTimestampStr('01:00pm')).toBe(true);
+      expect(parser.isValidTimestampStr('12:00pm')).toBe(true);
+      expect(parser.isValidTimestampStr('12:00am')).toBe(true);
+      expect(parser.isValidTimestampStr('5:59am')).toBe(true);
+    });
+
+    it('returns true for valid timestamps - 24hr time', () => {
+      parser.set24hrTime(true);
+      expect(parser.isValidTimestampStr('00:00')).toBe(true);
+      expect(parser.isValidTimestampStr('12:00')).toBe(true);
+      expect(parser.isValidTimestampStr('23:59')).toBe(true);
+      expect(parser.isValidTimestampStr('2:59')).toBe(true);
+      expect(parser.isValidTimestampStr('02:59')).toBe(true);
+    });
+
+    it('returns false for invalid timestamps', () => {
+      expect(parser.isValidTimestampStr('00:00am')).toBe(false);
+      expect(parser.isValidTimestampStr('001:00am')).toBe(false);
+      expect(parser.isValidTimestampStr('1:00')).toBe(false);
+      expect(parser.isValidTimestampStr('1:000pm')).toBe(false);
+      expect(parser.isValidTimestampStr('1:00ampm')).toBe(false);
+      expect(parser.isValidTimestampStr('123:00pm')).toBe(false);
+      expect(parser.isValidTimestampStr('12:000pm')).toBe(false);
+      expect(parser.isValidTimestampStr('12:60pm')).toBe(false);
+      expect(parser.isValidTimestampStr('12:00pm123')).toBe(false);
+      expect(parser.isValidTimestampStr('5:00:00pm')).toBe(false);
+      expect(parser.isValidTimestampStr(':00pm')).toBe(false);
+      expect(parser.isValidTimestampStr('1:pm')).toBe(false);
+      expect(parser.isValidTimestampStr('1::00pm')).toBe(false); // fix!
+    });
+
+    it('returns false for invalid timestamps - 24hr time', () => {
+      parser.set24hrTime(true);
+      expect(parser.isValidTimestampStr('1:00pm')).toBe(false);
+      expect(parser.isValidTimestampStr('1:00am')).toBe(false);
+      expect(parser.isValidTimestampStr('1:000')).toBe(false);
+      expect(parser.isValidTimestampStr('001:00')).toBe(false);
+      expect(parser.isValidTimestampStr('123:00')).toBe(false);
+      expect(parser.isValidTimestampStr('12:60')).toBe(false);
+      expect(parser.isValidTimestampStr('12:00:00')).toBe(false);
+      expect(parser.isValidTimestampStr('24:00')).toBe(false);
+    });
   });
   
   describe('isValidDurationStr', () => {
-  
+    it('returns true for a valid duration', () => {
+      expect(parser.isValidDurationStr('1hr')).toBe(true);
+      expect(parser.isValidDurationStr('1min')).toBe(true);
+      expect(parser.isValidDurationStr('160hr')).toBe(true);
+      expect(parser.isValidDurationStr('160min')).toBe(true);
+      expect(parser.isValidDurationStr('12hr30min')).toBe(true);
+      expect(parser.isValidDurationStr('0hr30min')).toBe(true);
+      expect(parser.isValidDurationStr('0hr0min')).toBe(true);
+      expect(parser.isValidDurationStr('1hr0min')).toBe(true);
+    });
+
+    it('returns false for a invalid duration', () => {
+      expect(parser.isValidDurationStr('2hr2hr')).toBe(false);
+      expect(parser.isValidDurationStr('2min2hr')).toBe(false); 
+      expect(parser.isValidDurationStr('hr45min')).toBe(false);
+      expect(parser.isValidDurationStr('5hrhr')).toBe(false);
+      expect(parser.isValidDurationStr('5hrmin')).toBe(false);
+      expect(parser.isValidDurationStr('5hr90')).toBe(false);
+      expect(parser.isValidDurationStr('5hr90min45')).toBe(false);
+      expect(parser.isValidDurationStr('0098min')).toBe(false);
+    });
   });
 
   describe('formatOutput', () => {

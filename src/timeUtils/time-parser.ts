@@ -1,6 +1,6 @@
-
 import { digitOnlyRegex } from './regex-util';
 import { TimeMath } from './time-math';
+import { convertStrToTokens } from './time-test-util';
 
 // time in ms
 export const SECOND = 1000;
@@ -16,8 +16,8 @@ export enum TimeType {
 }
 
 export enum TimeOperator {
-  PLUS = 'plus',
-  MINUS = 'minus',
+  PLUS = '+',
+  MINUS = '-',
   TO = 'to'
 }
 
@@ -39,7 +39,11 @@ export interface ParsedOperation {
   type: OperationType,
 }
 
-const OPERATOR_TOKENS = ['to', '+', '-'];
+export const OPERATOR_TOKENS = [
+  TimeOperator.TO as string, 
+  TimeOperator.PLUS as string, 
+  TimeOperator.MINUS as string
+];
 
 export function tokenToString(tokens: string[]): string {
   let output = ''
@@ -67,7 +71,7 @@ export class TimeParser {
 
   // this is the method used by the view to go from raw token input to string output
   public evaluateExpression(input: string[]): string {
-    const parsedExpression = this.parseExpression(tokenToString(input));
+    const parsedExpression = this.parseExpression(input);
     let time;
     let outputStr;
     if (parsedExpression) {
@@ -79,11 +83,10 @@ export class TimeParser {
     return outputStr ?? 'Invalid Input';
   }
 
-  public parseExpression(input: string): ParsedOperation | null {
-    // split string into 3 parts based on operator
+  public parseExpression(input: string[]): ParsedOperation | null {
     const parsedExpressionArray: [Time?, TimeOperator?, Time?] = [];
-    let expressionArray = input.split(' ');
-    if (expressionArray.length !== 3) {
+    let expressionArray = this.parseTokens(input);
+    if (expressionArray == null) {
       return null;
     }
 
@@ -92,7 +95,7 @@ export class TimeParser {
       return null;
     }
     const parsedTimeValue1 = this.getParsedTime(strVal1);
-    const parsedOperator = this.getParsedOperator(strVal2);
+    const parsedOperator = this.getParsedOperator(strVal2); // TODO - use value directly (maybe)
     const parsedTimeValue2 = this.getParsedTime(strVal3);
     
     if (!parsedTimeValue1 || !parsedOperator || !parsedTimeValue2) {
@@ -226,19 +229,129 @@ export class TimeParser {
   }
 
   public isValidTimestampStr(timeStr: string): boolean {
-    if (timeStr === 'now') {
+    const tokens = convertStrToTokens(timeStr); // TODO: refactor to use tokens directly
+
+    if (tokens.length === 1 && tokens[0] === 'now') {
       return true;
     }
-    if ((timeStr.indexOf('pm') > -1 || timeStr.indexOf('am') > -1) && this.is24hrTime) {
+
+    if (tokens.includes('hr') || tokens.includes('min')) {
+      return false;
+    }
+
+    let hours = '';
+    let minutes = '';
+    let after = '';
+    let addToSection = 'hours';
+    let colonCount = 0;
+    for (let token of tokens) {
+      if (token === ':') {
+        addToSection = 'minutes';
+        colonCount++;
+        continue;
+      }
+      if (token === 'am' || token === 'pm') {
+        addToSection = 'after';
+      }
+      if (addToSection === 'hours') {
+        hours += token;
+      }
+      if (addToSection === 'minutes') {
+        minutes += token;
+      }
+      if (addToSection === 'after') {
+        after += token;
+      }
+    }
+
+    if (colonCount > 1) {
+      return false;
+    }
+    
+    if (hours.length > 2 || hours.length < 1) {
+      return false;
+    }
+    
+
+    if (minutes.length !== 2) {
+      return false;
+    }
+    
+    if (this.is24hrTime && after.length > 0) {
+      return false;
+    }
+
+    if (!this.is24hrTime && (after !== 'am' && after !== 'pm')) {
+      return false;
+    }
+
+    const hoursToInt = parseInt(hours);
+    const minutesToInt = parseInt(minutes);
+
+    if (isNaN(hoursToInt) || isNaN(minutesToInt)) {
+      return false;
+    }
+
+    if (this.is24hrTime && hoursToInt > 23) {
+      return false;
+    }
+
+    if (!this.is24hrTime && (hoursToInt > 12 || hoursToInt < 1)) {
+      
+      return false;
+    }
+
+    if (minutesToInt > 59) {
       return false;
     }
   
-    // TODO - finish adding other validation
     return true;
   }
   
   public isValidDurationStr(timeStr: string): boolean {
-    // TODO - add implementation
+    const tokens = convertStrToTokens(timeStr); // TODO - use tokens directly
+
+    if (tokens.includes(':')) {
+      return false;
+    }
+
+    const values = [];
+    const units = [];
+
+    let value = '';
+    for (let token of tokens) {
+      if (token === 'hr' || token === 'min') {
+        values.push(value);
+        value = '';
+        units.push (token);
+        continue;
+      }
+
+      value += token;
+    }
+
+    if (value.length > 0) {
+      return false;
+    }
+
+    if (values.length > 2) {
+      return false;
+    }
+
+    for (let val of values) {
+      if (isNaN(parseInt(val))) {
+        return false;
+      }
+      // disallow leading zeros in duration values
+      if (val.length > 1 && val[0] === '0') {
+        return false;
+      }
+    }
+
+    if (units.length === 2 && (units[0] !== 'hr' || units[1] !== 'min')) {
+      return false;
+    }
+
     return true;
   }
 
@@ -286,6 +399,33 @@ export class TimeParser {
     }
     
     return `${hours}:${minutesStr}${suffix}`;
+  }
+
+  private parseTokens(tokens: string[]): string[] | null {
+    const terms = [];
+    let currentTerm = '';
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (OPERATOR_TOKENS.includes(token)) {
+        terms.push(currentTerm);
+        terms.push(token);
+        currentTerm = '';
+      } else {
+        currentTerm += token;
+      }
+    }
+    if (currentTerm.length) {
+      terms.push(currentTerm);
+    }
+    if (terms.length !== 3) {
+      return null;
+    }
+  
+    if (!OPERATOR_TOKENS.includes(terms[1])) {
+      return null;
+    }
+  
+    return terms;
   }
 
   private getParsedTime(timeStr: string): Time | null {
