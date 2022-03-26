@@ -11,8 +11,10 @@ const Calculator: React.FC = () => {
   const [ is24hrTime, setIs24hrTime ] = useState(false);
 
   const timeParserRef = useRef<TimeParser>();
+  timeParserRef.current = new TimeParser(is24hrTime);
+
   useEffect(() => {
-    timeParserRef.current = new TimeParser(is24hrTime);
+      timeParserRef.current?.set24hrTime(is24hrTime);
   }, [is24hrTime]);
 
   const handleUpdateInput = (token: string) => {
