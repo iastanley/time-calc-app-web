@@ -1,6 +1,7 @@
 {
   "name": "time-calc-app-web",
   "version": "0.1.0",
+  "homepage": "https://illanastanley.com/time-calc-app-web",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
@@ -19,6 +20,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -44,5 +47,8 @@
   },
   "jest": {
     "globalSetup": "./global-setup.js"
+  },
+  "devDependencies": {
+    "gh-pages": "^4.0.0"
   }
 }
