@@ -10,13 +10,15 @@ interface Props {
 
 export const ControlButtons: React.FC<Props> = ({ updateInput, toggle24hrTime, is24hrTime }) => {
   return <ControlButtonWrapper>
-    <TimeControlButton 
+    <TimeControlButton
+      disabled={is24hrTime} 
       isActive={!is24hrTime} 
       onClick={() => updateInput('am')}>am</TimeControlButton>
-    <TimeControlButton 
+    <TimeControlButton
+      disabled={is24hrTime} 
       isActive={!is24hrTime}
       onClick={() => updateInput('pm')}>pm</TimeControlButton>
-    <TimeControlButton 
+    <TimeControlButton
       isActive={is24hrTime}
       onClick={() => toggle24hrTime()}>24hr</TimeControlButton>
     <DurationControlButton onClick={() => updateInput('hr')}>hr</DurationControlButton>
@@ -40,6 +42,7 @@ const ControlButton = styled.button`
   border: none;
   border-radius: 25px;
   font-size: 20px;
+  color: ${btnColors.BTN_TEXT_ACTIVE};
   cursor: pointer;
 `
 

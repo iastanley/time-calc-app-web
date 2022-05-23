@@ -174,6 +174,7 @@ const Button = styled.button`
   border-radius: 20px;
   background: ${props => props.color};
   font-size: 30px;
+  color: ${btnColors.BTN_TEXT_ACTIVE};
 
   &:hover {
     cursor: pointer;
