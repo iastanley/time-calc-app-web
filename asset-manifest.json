@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/time-calc-app-web/static/css/main.4a26d2df.chunk.css",
+    "main.js": "/time-calc-app-web/static/js/main.2351fb59.chunk.js",
+    "main.js.map": "/time-calc-app-web/static/js/main.2351fb59.chunk.js.map",
+    "runtime-main.js": "/time-calc-app-web/static/js/runtime-main.cb0f8f33.js",
+    "runtime-main.js.map": "/time-calc-app-web/static/js/runtime-main.cb0f8f33.js.map",
+    "static/js/2.ca4c7077.chunk.js": "/time-calc-app-web/static/js/2.ca4c7077.chunk.js",
+    "static/js/2.ca4c7077.chunk.js.map": "/time-calc-app-web/static/js/2.ca4c7077.chunk.js.map",
+    "static/js/3.9d517965.chunk.js": "/time-calc-app-web/static/js/3.9d517965.chunk.js",
+    "static/js/3.9d517965.chunk.js.map": "/time-calc-app-web/static/js/3.9d517965.chunk.js.map",
+    "index.html": "/time-calc-app-web/index.html",
+    "static/css/main.4a26d2df.chunk.css.map": "/time-calc-app-web/static/css/main.4a26d2df.chunk.css.map",
+    "static/js/2.ca4c7077.chunk.js.LICENSE.txt": "/time-calc-app-web/static/js/2.ca4c7077.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.cb0f8f33.js",
+    "static/js/2.ca4c7077.chunk.js",
+    "static/css/main.4a26d2df.chunk.css",
+    "static/js/main.2351fb59.chunk.js"
+  ]
+}
