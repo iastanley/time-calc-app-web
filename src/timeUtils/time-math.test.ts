@@ -40,7 +40,7 @@ describe('TimeMath.evaluate', () => {
     expect(actual?.type).toBe(TimeType.DURATION);
   });
 
-  it('can evalluate a duration minus duration operation', () => {
+  it('can evaluate a duration minus duration operation', () => {
     const parsedOperation = timeParser.parseExpression(convertStrToTokens('1hr30min - 45min'));
     const actual = parsedOperation && TimeMath.evaluate(parsedOperation);
     const expected = (HOUR + (30 * MINUTE)) - (45 * MINUTE);
@@ -56,10 +56,10 @@ describe('TimeMath.evaluate', () => {
     expect(actual?.type).toBe(TimeType.DURATION);
   });
 
-  it('can evaluate a timepoint to an earlier timepoint', () => {
+  it('if the second timepoint is before the first timepoint evaluates the time to that timepoint on the next day', () => {
     const parsedOperation = timeParser.parseExpression(convertStrToTokens('5:00pm to 4:30pm'));
     const actual = parsedOperation && TimeMath.evaluate(parsedOperation);
-    const expected = -1 * 30 * MINUTE;
+    const expected = 23 * HOUR + 30 * MINUTE;
     expect(actual?.value).toBe(expected);
     expect(actual?.type).toBe(TimeType.DURATION);
   });
