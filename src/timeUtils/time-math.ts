@@ -1,4 +1,4 @@
-import { ParsedOperation, ParsedExpression, OperationType, TimeOperator, TimeType, Time } from './time-parser';
+import { ParsedOperation, ParsedExpression, OperationType, TimeOperator, TimeType, Time, HOUR } from './time-parser';
 
 export class TimeMath {
   static evaluate(operation: ParsedOperation): Time | null {
@@ -58,6 +58,11 @@ export class TimeMath {
   static evaluatePointToPoint(expression: ParsedExpression): number | null {
     const [value1, operator, value2] = expression;
     if (operator !== TimeOperator.TO) return null;
-    return value2.value - value1.value;
+    if (value2.value >= value1.value) {
+      return value2.value - value1.value;
+    }
+    // if time 2 is earlier than time 1 assume calculating to that time the next day
+    // ie 11:00pm to 1:00am = 2hrs NOT -22hrs
+    return (24 * HOUR + value2.value) - value1.value;
   }
 }
