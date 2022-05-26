@@ -63,7 +63,7 @@ const CalculatorWrapper = styled.div`
   height: 800px;
   margin: 150px auto;
   border-radius: 20px;
-  padding: 15px;
+  padding: 15px 15px 30px 15px;
   background: #414141;
 
   @media (max-width: 800px) {

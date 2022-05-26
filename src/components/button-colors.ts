@@ -7,4 +7,5 @@ export const BTN_YELLOW = '#f2c84c';
 export const BTN_BLUE = '#56cbf2';
 
 export const BTN_TEXT_INACTIVE = '#bdbdbd';
+export const BTN_TEXT_ACTIVE = '#000000';
 export const BTN_INACTIVE = '#f1f1f1';
