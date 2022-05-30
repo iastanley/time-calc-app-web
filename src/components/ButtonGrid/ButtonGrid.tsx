@@ -123,7 +123,7 @@ const ButtonsArray: ButtonConfig[] = [
     }
   },
   {
-    displayString: '<',
+    displayString: 'C',
     color: buttonColor.CANCEL,
     callback: ({ removeInput, clearInput, outputValue }) => {
       if (outputValue.length) {
@@ -144,17 +144,18 @@ const ButtonsArray: ButtonConfig[] = [
 ];
 
 export const ButtonGrid: React.FC<Props> = (props) => {
-  const formatBackButton = (btnDisplayString: string): string => {
-    if (btnDisplayString !== '<') {
-      return btnDisplayString;
-    }
-
-    return props.outputValue.length ? 'C' : '<';
-  } 
-
   return <ButtonGridWrapper>
     {ButtonsArray.map((btnConfig: ButtonConfig) => {
-      return <Button key={btnConfig.displayString} color={btnConfig.color} onClick={() => btnConfig.callback(props)}>{formatBackButton(btnConfig.displayString)}</Button>
+      if (btnConfig.displayString !== 'C') {
+        return <Button key={btnConfig.displayString} color={btnConfig.color} onClick={() => btnConfig.callback(props)}>{btnConfig.displayString}</Button>
+      } else {
+        return (
+          <BackButton key={btnConfig.displayString} color={btnConfig.color} onClick={() => btnConfig.callback(props)}>
+            {props.outputValue.length ? btnConfig.displayString : <BackSymbol></BackSymbol>}
+          </BackButton>
+        )
+      }
+      
     })}
   </ButtonGridWrapper>
 }
@@ -179,4 +180,19 @@ const Button = styled.button`
   &:hover {
     cursor: pointer;
   }
+`;
+
+const BackButton = styled(Button)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const BackSymbol = styled.div`
+  width: 0; 
+  height: 0; 
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent; 
+  border-right: 24px solid ${btnColors.BTN_TEXT_ACTIVE};
+  margin-right: 4px;
 `;
