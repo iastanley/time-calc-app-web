@@ -193,7 +193,7 @@ export class TimeParser {
       if (strVal.indexOf('pm') > -1) {
         isPM = true;
       }
-      timeOnlyStr = strVal.slice(0, -2); // remove trailing 'am' or 'pm' if is24hrTime === false
+      timeOnlyStr = strVal.replace(/am|pm/g, ''); // remove 'am' or 'pm' if is24hrTime === false
     } else {
       timeOnlyStr = strVal;
     }
@@ -208,24 +208,24 @@ export class TimeParser {
     if (hours !== 12 && isPM) {
       hours += 12;
     }
-    const minutes = parseInt(timeStrArray[1]);
+    let minutes;
+    if (timeStrArray.length > 1) {
+      minutes = parseInt(timeStrArray[1]);
+    } else {
+      minutes = 0; // If minutes are omited from strVal (eg 12pm) set to 0.
+    }
     
     today.setHours(hours, minutes);
     return today.getTime();
   }
 
-  // TODO - additional validation to ensure that this is a valid timetype
   // ie 04:00:00 - invalid, 5hr5 - invalid, 14:00pm - invalid
   public getTimeType(str: string): TimeType | null {
-    if (str.includes(':') || str === 'now') {
-      return this.isValidTimestampStr(str) ? TimeType.TIMESTAMP : null;
-    }
-
     if (str.includes('hr') || str.includes('min')) {
       return this.isValidDurationStr(str) ? TimeType.DURATION : null;
+    } else {
+      return this.isValidTimestampStr(str) ? TimeType.TIMESTAMP : null;
     }
-
-    return null;
   }
 
   public isValidTimestampStr(timeStr: string): boolean {
@@ -239,6 +239,7 @@ export class TimeParser {
       return false;
     }
 
+    // Sections: <hours>:<minutes><after (am/pm)>
     let hours = '';
     let minutes = '';
     let after = '';
@@ -251,7 +252,7 @@ export class TimeParser {
         continue;
       }
       if (token === 'am' || token === 'pm') {
-        addToSection = 'after';
+        addToSection = 'after'
       }
       if (addToSection === 'hours') {
         hours += token;
@@ -272,8 +273,8 @@ export class TimeParser {
       return false;
     }
     
-
-    if (minutes.length !== 2) {
+    // do not allow "12:pm"
+    if (colonCount > 0 && minutes.length !== 2) {
       return false;
     }
     
@@ -281,11 +282,16 @@ export class TimeParser {
       return false;
     }
 
-    if (!this.is24hrTime && (after !== 'am' && after !== 'pm')) {
+    if (!this.is24hrTime && (after !== '' && after !== 'am' && after !== 'pm')) {
       return false;
     }
 
     const hoursToInt = parseInt(hours);
+    if (minutes === '') {
+      // if the minutes section is missing we can assume the user omitted it.
+      // Examples: 12pm, 5 (for 5:00 in 24hr time).
+      minutes = '0';
+    }
     const minutesToInt = parseInt(minutes);
 
     if (isNaN(hoursToInt) || isNaN(minutesToInt)) {

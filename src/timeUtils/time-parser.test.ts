@@ -172,6 +172,50 @@ describe('TimeParser', () => {
       const expected = getMockDateNowTimestamp();
       expect(actual).toBe(expected);
     });
+
+    it('correctly calculates the timestamp for 5:00am', () => {
+      const actual = parser.getTimestamp('5:00am');
+      const expected = 315550800000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 5:00 - NOT 24hr time', () => {
+      const actual = parser.getTimestamp('5:00');
+      const expected = 315550800000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 5am', () => {
+      const actual = parser.getTimestamp('5am');
+      const expected = 315550800000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 5pm', () => {
+      const actual = parser.getTimestamp('5pm');
+      const expected = 315594000000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 5 - NOT 24hr time', () => {
+      const actual = parser.getTimestamp('5');
+      const expected = 315550800000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 5 - 24hr time', () => {
+      parser.set24hrTime(true);
+      const actual = parser.getTimestamp('5');
+      const expected = 315550800000;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly calculates the timestamp for 12 - 24hr time', () => {
+      parser.set24hrTime(true);
+      const actual = parser.getTimestamp('12');
+      const expected = 315576000000;
+      expect(actual).toBe(expected);
+    });
   });
 
   describe('isValidTimestampStr', () => {
@@ -181,6 +225,9 @@ describe('TimeParser', () => {
       expect(parser.isValidTimestampStr('12:00pm')).toBe(true);
       expect(parser.isValidTimestampStr('12:00am')).toBe(true);
       expect(parser.isValidTimestampStr('5:59am')).toBe(true);
+      expect(parser.isValidTimestampStr('1:00')).toBe(true);
+      expect(parser.isValidTimestampStr('12pm')).toBe(true);
+      expect(parser.isValidTimestampStr('5')).toBe(true);
     });
 
     it('returns true for valid timestamps - 24hr time', () => {
@@ -190,12 +237,13 @@ describe('TimeParser', () => {
       expect(parser.isValidTimestampStr('23:59')).toBe(true);
       expect(parser.isValidTimestampStr('2:59')).toBe(true);
       expect(parser.isValidTimestampStr('02:59')).toBe(true);
+      expect(parser.isValidTimestampStr('5')).toBe(true);
+      expect(parser.isValidTimestampStr('17')).toBe(true);
     });
 
     it('returns false for invalid timestamps', () => {
       expect(parser.isValidTimestampStr('00:00am')).toBe(false);
       expect(parser.isValidTimestampStr('001:00am')).toBe(false);
-      expect(parser.isValidTimestampStr('1:00')).toBe(false);
       expect(parser.isValidTimestampStr('1:000pm')).toBe(false);
       expect(parser.isValidTimestampStr('1:00ampm')).toBe(false);
       expect(parser.isValidTimestampStr('123:00pm')).toBe(false);
@@ -205,7 +253,9 @@ describe('TimeParser', () => {
       expect(parser.isValidTimestampStr('5:00:00pm')).toBe(false);
       expect(parser.isValidTimestampStr(':00pm')).toBe(false);
       expect(parser.isValidTimestampStr('1:pm')).toBe(false);
-      expect(parser.isValidTimestampStr('1::00pm')).toBe(false); // fix!
+      expect(parser.isValidTimestampStr('1::00pm')).toBe(false);
+      expect(parser.isValidTimestampStr('17:00')).toBe(false);
+      expect(parser.isValidTimestampStr('17')).toBe(false);
     });
 
     it('returns false for invalid timestamps - 24hr time', () => {
@@ -218,6 +268,9 @@ describe('TimeParser', () => {
       expect(parser.isValidTimestampStr('12:60')).toBe(false);
       expect(parser.isValidTimestampStr('12:00:00')).toBe(false);
       expect(parser.isValidTimestampStr('24:00')).toBe(false);
+      expect(parser.isValidTimestampStr('5:')).toBe(false);
+      expect(parser.isValidTimestampStr(':30')).toBe(false);
+      expect(parser.isValidTimestampStr('24')).toBe(false);
     });
   });
   
