@@ -56,5 +56,5 @@ const NowControlButton = styled(ControlButton)`
 
 const TimeControlButton = styled(ControlButton)<{ isActive: boolean }>`
   background-color: ${props => props.isActive ? btnColors.BTN_BLUE : btnColors.BTN_INACTIVE};
-  color: ${props => props.isActive ? 'inherit' : btnColors.BTN_TEXT_INACTIVE};
+  color: ${props => props.isActive ? btnColors.BTN_TEXT_ACTIVE : btnColors.BTN_TEXT_INACTIVE};
 `
