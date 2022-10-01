@@ -164,8 +164,8 @@ const ButtonGridWrapper = styled.div`
   height: 45%;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
   column-gap: 10px;
   row-gap: 10px;
 `;
